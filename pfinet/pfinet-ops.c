@@ -77,18 +77,18 @@ S_pfinet_siocgifconf (io_t port,
     {
       /* Possibly allocate a new buffer. */
       if (*len < amount)
-	{
-	  ifc.ifc_buf = (char *) mmap (0, amount, PROT_READ|PROT_WRITE,
-				       MAP_ANON, 0, 0);
-	  if (ifc.ifc_buf == MAP_FAILED)
-	    {
-        pthread_mutex_unlock(&global_lock);
-        /* Should use errno here, but glue headers #undef errno */    
-	      return ENOMEM;
-	    }
-	}
+        {
+          ifc.ifc_buf = (char *) mmap (0, amount, PROT_READ|PROT_WRITE,
+                                       MAP_ANON, 0, 0);
+          if (ifc.ifc_buf == MAP_FAILED)
+            {
+              pthread_mutex_unlock(&global_lock);
+              /* Should use errno here, but glue headers #undef errno */    
+              return ENOMEM;
+            }
+        }
       else
-	ifc.ifc_buf = *ifr;
+        ifc.ifc_buf = *ifr;
       err = dev_ifconf ((char *) &ifc);
     }
 
@@ -157,19 +157,19 @@ S_pfinet_getroutes (io_t port,
       /* Possibly allocate a new buffer. */
       if (*len < amount * sizeof(ifrtreq_t))
         {
-	  rtable = (ifrtreq_t *) mmap (0, amount * sizeof(ifrtreq_t), PROT_READ|PROT_WRITE,
-				       MAP_ANON, 0, 0);
-	  if (rtable == MAP_FAILED)
-	    {
-        pthread_mutex_unlock(&global_lock);
-        /* Should use errno here, but glue headers #undef errno */    
-	      return ENOMEM;
-	    }
-	  if (dealloc_data)
-	    *dealloc_data = TRUE;
-	}
+          rtable = (ifrtreq_t *) mmap (0, amount * sizeof(ifrtreq_t), PROT_READ|PROT_WRITE,
+                                       MAP_ANON, 0, 0);
+          if (rtable == MAP_FAILED)
+            {
+              pthread_mutex_unlock(&global_lock);
+              /* Should use errno here, but glue headers #undef errno */    
+              return ENOMEM;
+            }
+          if (dealloc_data)
+            *dealloc_data = TRUE;
+        }
       else
-	rtable = (ifrtreq_t *)*routes;
+        rtable = (ifrtreq_t *)*routes;
 
       n = get_routing_table (0, n, rtable);
       if (amount > n)
